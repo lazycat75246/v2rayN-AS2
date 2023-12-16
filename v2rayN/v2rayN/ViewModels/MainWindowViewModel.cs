@@ -249,6 +249,10 @@ namespace v2rayN.ViewModels
 
         #endregion UI
 
+        
+
+        ServerAutoSwitch ServerAutoSwitchs= new ServerAutoSwitch();
+
         #region Init
 
         public MainWindowViewModel(ISnackbarMessageQueue snackbarMessageQueue, Action<EViewAction> updateView)
@@ -581,6 +585,8 @@ namespace v2rayN.ViewModels
 
             Reload();
             ChangeSystemProxyStatus(_config.sysProxyType, true);
+            ServerAutoSwitchs.SetDelegate(SetDefaultServer);
+            ServerAutoSwitchs.Start();
         }
 
         private void OnProgramStarted(object state, bool timeout)
