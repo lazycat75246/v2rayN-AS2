@@ -1135,4 +1135,31 @@
   <data name="TbRoutingRuleIP" xml:space="preserve">
     <value>IP 或 IP CIDR</value>
   </data>
+  <data name="LvAutoSwitch" xml:space="preserve">
+    <value>自動切換</value>
+  </data>
+  <data name="TbSettingsAutoSwitch" xml:space="preserve">
+    <value>自動切換設定</value>
+  </data>
+  <data name="TbSettingsServerSelectMode" xml:space="preserve">
+    <value>切換到伺服器</value>
+  </data>
+  <data name="TbSettingsAutoSwitchMainMode" xml:space="preserve">
+    <value>自動切換模式</value>
+  </data>
+  <data name="TbSettingsFailTimeMax" xml:space="preserve">
+    <value>伺服器失敗最長時間（秒）</value>
+  </data>
+  <data name="TbEnableAutoSwitchAs" xml:space="preserve">
+    <value>自動切換</value>
+  </data>
+  <data name="menuAddHysteria2Server" xml:space="preserve">
+    <value>新增[Trojan]伺服器</value>
+  </data>
+  <data name="TbSettingsHysteriaBandwidth" xml:space="preserve">
+    <value>Hysteria 最大頻寬（Up/Dw）</value>
+  </data>
+  <data name="TbSettingsUseSystemHosts" xml:space="preserve">
+    <value>使用系統hosts</value>
+  </data>
 </root>
