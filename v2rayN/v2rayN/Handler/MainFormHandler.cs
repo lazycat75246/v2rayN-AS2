@@ -204,8 +204,13 @@ namespace v2rayN.Handler
                 var dtNow = DateTime.Now;
                 if (config.guiItem.autoUpdateInterval > 0)
                 {
+                    var geofileexist = File.Exists(Utils.GetConfigPath("geoip.db"))
+                        && File.Exists(Utils.GetConfigPath("geosite.db"))
+                        && File.Exists(Utils.GetBinPath("geoip.dat"))
+                        && File.Exists(Utils.GetBinPath("geosite.dat"));
+
                     var h = (dtNow - autoUpdateGeoTime).Hours;
-                    if (h>0 && h % config.guiItem.autoUpdateInterval == 0)
+                    if (!geofileexist || (h > 0 && h % config.guiItem.autoUpdateInterval == 0))
                     {
                         updateHandle.UpdateGeoFileAll(config, (bool success, string msg) =>
                         {
