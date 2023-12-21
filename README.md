@@ -7,6 +7,7 @@ A GUI client for Windows, support [Xray core](https://github.com/XTLS/Xray-core)
 [![GitHub Releases](https://img.shields.io/github/downloads/2dust/v2rayN/latest/total?logo=github)](https://github.com/2dust/v2rayN/releases)
 [![Chat on Telegram](https://img.shields.io/badge/Chat%20on-Telegram-brightgreen.svg)](https://t.me/v2rayn)
 
+[自動切換節點功能使用方法](AUTOSWITCH.md)
 
 ## How to use
 - If you are new to this, please download v2rayN-With-Core.zip from [releases](https://github.com/2dust/v2rayN/releases)
