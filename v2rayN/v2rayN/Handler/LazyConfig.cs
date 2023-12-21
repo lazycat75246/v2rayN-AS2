@@ -178,6 +178,15 @@ namespace v2rayN.Handler
             return SqliteHelper.Instance.Table<ProfileItem>().FirstOrDefault(it => it.indexId == indexId);
         }
 
+        public ProfileItem? GetProfileItemRemarks(string Remarks)
+        {
+            if (Utils.IsNullOrEmpty(Remarks))
+            {
+                return null;
+            }
+            return SqliteHelper.Instance.Table<ProfileItem>().FirstOrDefault(it => it.remarks == Remarks);
+        }
+
         public List<RoutingItem> RoutingItems()
         {
             return SqliteHelper.Instance.Table<RoutingItem>().Where(it => it.locked == false).OrderBy(t => t.sort).ToList();

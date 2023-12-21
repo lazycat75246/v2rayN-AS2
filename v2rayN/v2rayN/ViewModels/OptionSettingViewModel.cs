@@ -97,6 +97,10 @@ namespace v2rayN.ViewModels
 
         #endregion CoreType
 
+        [Reactive] public int ServerSelectMode { get; set; }
+        [Reactive] public int AutoSwitchMode { get; set; }
+        [Reactive] public int FailTimeMax { get; set; }
+
         public ReactiveCommand<Unit, Unit> SaveCmd { get; }
 
         public OptionSettingViewModel(Window view)
@@ -176,6 +180,10 @@ namespace v2rayN.ViewModels
             TunMtu = _config.tunModeItem.mtu;
 
             #endregion Tun mode
+
+            FailTimeMax = _config.autoSwitchItem.FailTimeMax;
+            AutoSwitchMode = _config.autoSwitchItem.mode;
+            ServerSelectMode = _config.autoSwitchItem.ServerSelectMode;
 
             InitCoreType();
 
@@ -319,6 +327,10 @@ namespace v2rayN.ViewModels
             _config.tunModeItem.strictRoute = TunStrictRoute;
             _config.tunModeItem.stack = TunStack;
             _config.tunModeItem.mtu = TunMtu;
+
+            _config.autoSwitchItem.mode = AutoSwitchMode;
+            _config.autoSwitchItem.ServerSelectMode=ServerSelectMode;
+            _config.autoSwitchItem.FailTimeMax = FailTimeMax;
 
             //coreType
             SaveCoreType();
