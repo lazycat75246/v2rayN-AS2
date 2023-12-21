@@ -167,6 +167,7 @@ namespace v2rayN.Handler
 
             Task.Run(async () =>
             {
+                var listprofile = LazyConfig.Instance.ProfileItemsAutoSwitch();
                 foreach (var item in subItem)
                 {
                     string id = item.id.TrimEx();
@@ -275,6 +276,15 @@ namespace v2rayN.Handler
                             Logging.SaveLog("FailedImportSubscription");
                             Logging.SaveLog(result);
                         }
+                        else
+                        {
+                            foreach (var item3 in listprofile)
+                            {
+                                var item2 = LazyConfig.Instance.GetProfileItemRemarks(item3.remarks);
+                                item2.autoSwitch = true;
+                                SqliteHelper.Instance.Update(item2);
+                            }
+                        }
                         _updateFunc(false,
                             ret > 0
                                 ? $"{hashCode}{ResUI.MsgUpdateSubscriptionEnd}"
@@ -284,6 +294,8 @@ namespace v2rayN.Handler
                 }
 
                 _updateFunc(true, $"{ResUI.MsgUpdateSubscriptionEnd}");
+
+
             });
         }
 

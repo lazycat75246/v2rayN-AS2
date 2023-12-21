@@ -176,6 +176,15 @@ namespace v2rayN.Handler
             return SqliteHelper.Instance.Table<ProfileItem>().FirstOrDefault(it => it.indexId == indexId);
         }
 
+        public ProfileItem? GetProfileItemRemarks(string Remarks)
+        {
+            if (Utils.IsNullOrEmpty(Remarks))
+            {
+                return null;
+            }
+            return SqliteHelper.Instance.Table<ProfileItem>().FirstOrDefault(it => it.remarks == Remarks);
+        }
+
         public ProfileItem? GetProfileItemViaRemarks(string remarks)
         {
             if (Utils.IsNullOrEmpty(remarks))
