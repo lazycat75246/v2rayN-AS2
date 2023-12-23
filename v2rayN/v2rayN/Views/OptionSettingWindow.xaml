@@ -9,6 +9,7 @@
     xmlns:reactiveui="http://reactiveui.net"
     xmlns:resx="clr-namespace:v2rayN.Resx"
     xmlns:vms="clr-namespace:v2rayN.ViewModels"
+    xmlns:local="clr-namespace:v2rayN.Mode"
     Title="{x:Static resx:ResUI.menuSetting}"
     Width="1000"
     Height="700"
@@ -1040,8 +1041,31 @@ Style="{StaticResource DefComboBox}" />
     Margin="{StaticResource SettingItemMargin}"
     materialDesign:HintAssist.Hint="Level"
     Style="{StaticResource DefComboBox}" />
-
                     
+                    <TextBlock
+    Grid.Row="3"
+    Grid.Column="0"
+    Margin="{StaticResource SettingItemMargin}"
+    VerticalAlignment="Center"
+    Style="{StaticResource ToolbarTextBlock}"
+    Text="{x:Static resx:ResUI.TbSettingsMainServers}" />
+                    <ComboBox
+    x:Name="cmbMainServer"
+    Grid.Row="3"
+    Grid.Column="1"
+    Width="200"
+    Margin="{StaticResource SettingItemMargin}"
+    materialDesign:HintAssist.Hint=""
+    Style="{StaticResource DefComboBox}" >
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="{Binding ServerName}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />    
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
                 </Grid>
             </TabItem>
         </TabControl>

@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using DynamicData.Binding;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Splat;
 using System.Reactive;
@@ -103,6 +104,9 @@ namespace v2rayN.ViewModels
 
         public ReactiveCommand<Unit, Unit> SaveCmd { get; }
 
+        private IObservableCollection<MainServerItem> _mainserveritems = new ObservableCollectionExtended<MainServerItem>();
+        public IObservableCollection<MainServerItem> MainServerItems => _mainserveritems;
+
         public OptionSettingViewModel(Window view)
         {
             _config = LazyConfig.Instance.GetConfig();
@@ -185,6 +189,31 @@ namespace v2rayN.ViewModels
             AutoSwitchMode = _config.autoSwitchItem.mode;
             ServerSelectMode = _config.autoSwitchItem.ServerSelectMode;
 
+
+            var listprofile = LazyConfig.Instance.ProfileItemsAutoSwitch();
+
+            foreach ( var item in listprofile)
+            {
+               var item2= _config.mainServerItems?.Find(x => x == item.indexId);
+
+                MainServerItems.Add(new MainServerItem()
+                {
+                    indexId = item.indexId,
+                    ServerName =item.remarks,
+                    IsChecked = item2 != null
+                });
+            }
+
+            //MainServerItems.Add(new MainServerItem()
+            //{
+            //    ServerName = "111",
+            //    IsChecked = false
+            //});
+            //MainServerItems.Add(new MainServerItem()
+            //{
+            //    ServerName = "222",
+            //    IsChecked = true
+            //});
             InitCoreType();
 
             SaveCmd = ReactiveCommand.Create(() =>
@@ -331,6 +360,15 @@ namespace v2rayN.ViewModels
             _config.autoSwitchItem.mode = AutoSwitchMode;
             _config.autoSwitchItem.ServerSelectMode=ServerSelectMode;
             _config.autoSwitchItem.FailTimeMax = FailTimeMax;
+
+            foreach (var item in MainServerItems)
+            {
+                if(item.IsChecked && _config.mainServerItems?.Find(x=>x==item.indexId)==null)
+                    _config.mainServerItems.Add(item.indexId);
+
+                if (!item.IsChecked && _config.mainServerItems?.Find(x => x == item.indexId) != null)
+                    _config.mainServerItems.Remove(item.indexId);
+            }
 
             //coreType
             SaveCoreType();

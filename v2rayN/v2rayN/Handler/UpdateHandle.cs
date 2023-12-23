@@ -283,9 +283,22 @@ namespace v2rayN.Handler
                             foreach (var item3 in listprofile)
                             {
                                 var item2 = LazyConfig.Instance.GetProfileItemRemarks(item3.remarks);
-                                item2.autoSwitch = true;
-                                SqliteHelper.Instance.Update(item2);
+                                var item4 = _config.mainServerItems?.Find(x => x == item3.indexId);
+                                if (item2 != null)
+                                {
+                                    item2.autoSwitch = true;
+                                    SqliteHelper.Instance.Update(item2);
+           
+                                    if (item4 != null)
+                                        item4 = item2.indexId;
+                                }
+                                else
+                                {
+                                    if (item4 != null)
+                                        _config.mainServerItems?.Remove(item4);
+                                }
                             }
+                            ConfigHandler.SaveConfig(ref _config);
                         }
                         _updateFunc(false,
                             ret > 0

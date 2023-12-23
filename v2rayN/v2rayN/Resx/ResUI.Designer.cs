@@ -2699,6 +2699,24 @@ namespace v2rayN.Resx {
         }
         
         /// <summary>
+        ///   查找类似 Main-Backup Mode 的本地化字符串。
+        /// </summary>
+        public static string TbSettingsMainServerBackup {
+            get {
+                return ResourceManager.GetString("TbSettingsMainServerBackup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Main servers 的本地化字符串。
+        /// </summary>
+        public static string TbSettingsMainServers {
+            get {
+                return ResourceManager.GetString("TbSettingsMainServers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 sing-box Mux Protocol 的本地化字符串。
         /// </summary>
         public static string TbSettingsMux4SboxProtocol {

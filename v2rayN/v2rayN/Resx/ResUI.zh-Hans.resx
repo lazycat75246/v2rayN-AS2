@@ -1180,4 +1180,10 @@
   <data name="turnOnSwitchWarn" xml:space="preserve">
     <value>选择的切换服务器数量必须大于等于2才能启动切换!</value>
   </data>
+  <data name="TbSettingsMainServers" xml:space="preserve">
+    <value>主服务器</value>
+  </data>
+  <data name="TbSettingsMainServerBackup" xml:space="preserve">
+    <value>主-备 模式</value>
+  </data>
 </root>

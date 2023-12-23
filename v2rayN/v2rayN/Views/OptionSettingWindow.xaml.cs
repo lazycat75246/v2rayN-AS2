@@ -93,6 +93,7 @@ namespace v2rayN.Views
             cmbServerSelectMode.Items.Add(Resx.ResUI.TbSettingsLowestRealPingServer);
 
             cmbAutoSwitchMainMode.Items.Add(Resx.ResUI.TbSettingsServerFail);
+            cmbAutoSwitchMainMode.Items.Add(Resx.ResUI.TbSettingsMainServerBackup);
             //fill fonts
             try
             {
@@ -206,6 +207,8 @@ namespace v2rayN.Views
                 this.Bind(ViewModel, vm => vm.FailTimeMax, v => v.txtFailTimeMax.Text).DisposeWith(disposables);
 
                 this.BindCommand(ViewModel, vm => vm.SaveCmd, v => v.btnSave).DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel, vm => vm.MainServerItems, v => v.cmbMainServer.ItemsSource).DisposeWith(disposables);
             });
 
             txtFailTimeMax.TextChanged += (s, e) =>

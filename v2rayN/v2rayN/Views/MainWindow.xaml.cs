@@ -710,7 +710,17 @@ namespace v2rayN.Views
            var item = LazyConfig.Instance.GetProfileItem(ViewModel.SelectedProfile.indexId);
             item.autoSwitch = ViewModel.SelectedProfile.autoSwitch;
             SqliteHelper.Instance.Update(item);
-            if(!ViewModel.SelectedProfile.autoSwitch)
+
+            if(!item.autoSwitch)
+            {
+                _config.mainServerItems?.Remove(item.indexId);
+                ConfigHandler.SaveConfig(ref _config);
+            }
+                
+
+                
+
+            if (!ViewModel.SelectedProfile.autoSwitch)
             {
                 var profiles = LazyConfig.Instance.ProfileItemsAutoSwitch();
                 if(profiles.Count< 2 && _config.autoSwitchItem.EnableAutoSwitch)

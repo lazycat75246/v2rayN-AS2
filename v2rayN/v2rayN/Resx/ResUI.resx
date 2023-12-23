@@ -1183,4 +1183,10 @@
   <data name="turnOnSwitchWarn" xml:space="preserve">
     <value>The number of selected switching servers must be greater than or equal to 2 to start switching!</value>
   </data>
+  <data name="TbSettingsMainServerBackup" xml:space="preserve">
+    <value>Main-Backup Mode</value>
+  </data>
+  <data name="TbSettingsMainServers" xml:space="preserve">
+    <value>Main servers</value>
+  </data>
 </root>
