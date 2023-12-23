@@ -210,6 +210,9 @@ namespace v2rayN.Handler
                 };
             }
 
+            if (config.mainServerItems == null)
+                config.mainServerItems = new();
+
             LazyConfig.Instance.SetConfig(config);
             return 0;
         }
