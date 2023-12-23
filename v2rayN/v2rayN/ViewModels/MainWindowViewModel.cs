@@ -905,7 +905,7 @@ namespace v2rayN.ViewModels
                 }
 
                 if(_setAutoSwitchAll!=null)
-                  _setAutoSwitchAll(autoswitchservercount == lstModel.Count);
+                  _setAutoSwitchAll( lstModel.Count>0 && autoswitchservercount == lstModel.Count);
             }));
         }
 
