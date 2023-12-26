@@ -21,9 +21,23 @@ namespace v2rayN.Handler
         public string indexId { get; set; }
         public long latency { get; set; }
     }
+    public class TestSuccessTimeItem
+    {
+        public string indexId { get; set; }
+        public long successtime { get; set; }
+    }
+    public class latencyCompare : IComparer<TestResultItem>
+    {
+        public int Compare(TestResultItem x, TestResultItem y)
+        {
+            return x.latency.CompareTo(y.latency);
+        }
+     }
     public class ServerAutoSwitch
     {
         private List<TestResultItem> testResultItems= new List<TestResultItem>();
+        private List<TestResultItem> testResultItemsMain = new List<TestResultItem>();
+        private List<TestSuccessTimeItem> testSuccessTimeItemsMain = new List<TestSuccessTimeItem>();
         private static readonly object objLock = new();
         private bool bStop = false;
         private NoticeHandler? _noticeHandler;
@@ -80,7 +94,26 @@ namespace v2rayN.Handler
                 setTestResultDelegates(id, dl, speed);
             }
         }
-      
+        private void UpdateSpeedtestHandlerMain(string id, string dl, string speed)
+        {
+            lock (objLock)
+            {
+                int i;
+                bool isNumeric = Int32.TryParse(dl, out i);
+                if (!isNumeric)
+                    return;
+
+                //if (i <= 0 || id == LazyConfig.Instance.GetConfig().indexId)
+                //    return;
+
+                testResultItemsMain.Add(new TestResultItem
+                {
+                    indexId = id,
+                    latency = i
+                });
+                setTestResultDelegates(id, dl, speed);
+            }
+        }
         public void Start()
         {
             if (taskmain != null)
@@ -98,6 +131,7 @@ namespace v2rayN.Handler
                 long failtimestart = 0;
                 int LastServerSelectMode = -1;
                 List<ProfileItem> listprofile = new List<ProfileItem>();
+                List<ProfileItem> listprofileMain = new List<ProfileItem>();
                 while (!bStop)
                 {
                     var _config = LazyConfig.Instance.GetConfig();
@@ -114,12 +148,17 @@ namespace v2rayN.Handler
                         _noticeHandler?.SendMessage("Current server test failed!",true);
                         if (failtimestart == 0)
                             failtimestart = GetTimestamp(DateTime.Now);
-                        if (GetTimestamp(DateTime.Now) - failtimestart >= iFailTimeMax)
+                        if (GetTimestamp(DateTime.Now) - failtimestart >= iFailTimeMax || testResultItemsMain?.Count>0)
                         {
+
                             if (testResultItems.Count == 0 || listprofile.Count == 0 || ServerSelectMode!= LastServerSelectMode)
                             {
                                 testResultItems.Clear();
                                 listprofile = LazyConfig.Instance.ProfileItemsAutoSwitch();
+                                if(AutoSwitchMode==1)
+                                {
+                                    testResultItemsMain?.Clear();
+                                }
                             }
 
                             if (listprofile.Count >= 2)
@@ -184,6 +223,25 @@ namespace v2rayN.Handler
                                     if (testResultItems.Count > 0)
                                     {
                                         testResultItems.Sort((x, y) => x.latency.CompareTo(y.latency));
+                                        if (AutoSwitchMode == 1 && _config.mainServerItems!=null)
+                                        {
+                                            int maincount = 0;
+                                            foreach (var item in _config.mainServerItems)
+                                            {
+                                                int kk = testResultItems.FindLastIndex(y => y.indexId == item);
+                                                if (kk >= 0)
+                                                {
+                                                    testResultItems.Insert(0, testResultItems[kk]);
+                                                    testResultItems.RemoveAt(kk + 1);
+                                                    maincount++;
+                                                }
+                                            }                                           
+                                            if(maincount>1)
+                                            {
+                                                var latencyCompares = new latencyCompare();
+                                                testResultItems.Sort(0, maincount, latencyCompares);
+                                            }                                              
+                                        }
                                         setDefaultServerDelegates(testResultItems[0].indexId);
                                         testResultItems.RemoveAt(0);
                                     }
@@ -201,9 +259,86 @@ namespace v2rayN.Handler
                     }
                     else
                     {
-                        failtimestart = 0;
-                        testResultItems.Clear();
-                        listprofile.Clear();
+                        if(AutoSwitchMode==1)
+                        {
+                            if (_config.mainServerItems?.Find(x=>x==_config.indexId)==null)
+                            {
+                                if(listprofile.Count<=0)
+                                {
+                                    listprofile = LazyConfig.Instance.ProfileItemsAutoSwitch();
+
+                                }
+                                if (listprofileMain.Count <= 0)
+                                {
+                                    foreach (var item in listprofile)
+                                    {
+                                        var item2 = _config.mainServerItems?.Find(x => x == item.indexId);
+                                        if (item2 != null)
+                                            listprofileMain.Add(item);
+                                    }
+                                }
+
+                                testResultItemsMain?.Clear();
+
+                                var _coreHandler = new CoreHandler(_config, (bool x, string y) => { });
+
+                                if (ServerSelectMode == 0 || ServerSelectMode == 1)
+                                    new SpeedtestHandler(_config, _coreHandler, listprofileMain, Mode.ESpeedActionType.Tcping, UpdateSpeedtestHandlerMain);
+                                else if (ServerSelectMode == 2)
+                                    new SpeedtestHandler(_config, _coreHandler, listprofileMain, Mode.ESpeedActionType.Realping, UpdateSpeedtestHandlerMain);
+
+                                while (testResultItemsMain.Count < listprofileMain.Count)
+                                {
+                                    Thread.Sleep(20);
+                                }
+
+                                testResultItemsMain.Sort((x, y) => x.latency.CompareTo(y.latency));
+
+                                foreach (var item in testResultItemsMain)
+                                {
+                                    var item2 = testSuccessTimeItemsMain?.Find(x => x.indexId == item.indexId);
+                                    if (item.latency==-1)
+                                    {                                      
+                                        if(item2 != null)
+                                            testSuccessTimeItemsMain?.Remove(item2 );
+                                    }
+                                    else
+                                    {
+                                        if (item2 != null)
+                                        {
+                                            if(GetTimestamp(DateTime.Now)-item2.successtime>=iFailTimeMax/2)
+                                            {
+                                                setDefaultServerDelegates(item2.indexId);
+                                                testSuccessTimeItemsMain?.Remove(item2);
+                                                _noticeHandler?.SendMessage("Main server test success! switch back", true);
+                                                break;
+                                            }
+                                        }
+                                        else
+                                            testSuccessTimeItemsMain?.Add(new TestSuccessTimeItem
+                                            {
+                                                indexId = item.indexId,
+                                                successtime = GetTimestamp(DateTime.Now)
+                                            });
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                testSuccessTimeItemsMain?.Clear();
+                                testResultItemsMain?.Clear();
+                                listprofileMain.Clear();
+                                failtimestart = 0;
+                                testResultItems.Clear();
+                                listprofile.Clear();
+                            }                                
+                        }
+                        else
+                        {
+                            failtimestart = 0;
+                            testResultItems.Clear();
+                            listprofile.Clear();
+                        }
                     }
                     LastServerSelectMode = ServerSelectMode;
                 }
