@@ -173,6 +173,7 @@ namespace v2rayN.Mode
         public int FailTimeMax { get; set; } = 60;
         public int ServerSelectMode { get; set; } = 1;
         public int mode { get; set; } = 0;
+        public double LatencyLowerRatio { get; set; } = 0.7;
     }
 
     [Serializable]

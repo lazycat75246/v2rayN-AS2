@@ -1043,6 +1043,7 @@ Style="{StaticResource DefComboBox}" />
     Style="{StaticResource DefComboBox}" />
                     
                     <TextBlock
+    x:Name="cmbMainServerTitle"
     Grid.Row="3"
     Grid.Column="0"
     Margin="{StaticResource SettingItemMargin}"
@@ -1057,6 +1058,7 @@ Style="{StaticResource DefComboBox}" />
     Margin="{StaticResource SettingItemMargin}"
     materialDesign:HintAssist.Hint=""
     Style="{StaticResource DefComboBox}" >
+                       
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -1065,7 +1067,21 @@ Style="{StaticResource DefComboBox}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-
+                    <TextBlock
+    x:Name="TxtLatencyLowerRatioTitle"
+    Grid.Row="4"
+    Grid.Column="0"
+    Margin="{StaticResource SettingItemMargin}"
+    VerticalAlignment="Center"
+    Style="{StaticResource ToolbarTextBlock}"
+    Text="{x:Static resx:ResUI.TbSettingsLatencyLowerRatio}" />
+                    <TextBox
+    x:Name="TxtLatencyLowerRatio"
+    Grid.Row="4"
+    Grid.Column="1"
+    Width="200"
+    Margin="{StaticResource SettingItemMargin}"
+    Style="{StaticResource DefTextBox}" />
                 </Grid>
             </TabItem>
         </TabControl>

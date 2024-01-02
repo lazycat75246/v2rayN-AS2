@@ -94,6 +94,7 @@ namespace v2rayN.Views
 
             cmbAutoSwitchMainMode.Items.Add(Resx.ResUI.TbSettingsServerFail);
             cmbAutoSwitchMainMode.Items.Add(Resx.ResUI.TbSettingsMainServerBackup);
+            cmbAutoSwitchMainMode.Items.Add(Resx.ResUI.TbSettingsKeepLowestLatency);
             //fill fonts
             try
             {
@@ -205,6 +206,7 @@ namespace v2rayN.Views
                 this.Bind(ViewModel, vm => vm.AutoSwitchMode, v => v.cmbAutoSwitchMainMode.SelectedIndex).DisposeWith(disposables);
                 this.Bind(ViewModel, vm => vm.ServerSelectMode, v => v.cmbServerSelectMode.SelectedIndex).DisposeWith(disposables);
                 this.Bind(ViewModel, vm => vm.FailTimeMax, v => v.txtFailTimeMax.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.LatencyLowerRatio, v => v.TxtLatencyLowerRatio.Text).DisposeWith(disposables);
 
                 this.BindCommand(ViewModel, vm => vm.SaveCmd, v => v.btnSave).DisposeWith(disposables);
 
@@ -215,6 +217,63 @@ namespace v2rayN.Views
             {
                 txtFailTimeMax_OnTextChanged(s, e);
             };
+            TxtLatencyLowerRatio.TextChanged += (s, e) =>
+            {
+                TxtLatencyLowerRatio_OnTextChanged(s, e);
+            };
+            cmbAutoSwitchMainMode.SelectionChanged += (s, e) =>
+            {
+                cmbAutoSwitchMainMode_OnSelectionChanged(s, e);
+            };
+        }
+        private void cmbAutoSwitchMainMode_OnSelectionChanged(object sender, EventArgs e)
+        {
+            var cmb=sender as ComboBox;
+            if(cmb != null)
+            {
+                if(cmb.SelectedIndex == 1)
+                {
+                    cmbMainServer.Visibility = Visibility.Visible;
+                    cmbMainServerTitle.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    cmbMainServer.Visibility = Visibility.Collapsed;
+                    cmbMainServerTitle.Visibility = Visibility.Collapsed;
+                }
+
+                if (cmb.SelectedIndex == 2)
+                {
+                    TxtLatencyLowerRatio.Visibility = Visibility.Visible;
+                    TxtLatencyLowerRatioTitle.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    TxtLatencyLowerRatio.Visibility = Visibility.Collapsed;
+                    TxtLatencyLowerRatioTitle.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+        private async void TxtLatencyLowerRatio_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                string beginContext = tb.Text;
+                await Task.Delay(2000);
+                if (beginContext == tb.Text)
+                {
+                    double value;
+                    if (double.TryParse(tb.Text, out value))
+                    {
+                        if (value > 0.9)
+                            tb.Text = "0.9";
+                        else if (value < 0.1)
+                            tb.Text = "0.1";
+                        double.TryParse(tb.Text, out value);
+                    }
+                    ViewModel.LatencyLowerRatio = value;
+                }
+            }
         }
         private async void txtFailTimeMax_OnTextChanged(object sender, TextChangedEventArgs e)
         {
@@ -231,6 +290,7 @@ namespace v2rayN.Views
                             tb.Text = "600";
                         else if (value < 30)
                             tb.Text = "30";
+                        int.TryParse(tb.Text, out value);
                     }
                     ViewModel.FailTimeMax=value;
                 }

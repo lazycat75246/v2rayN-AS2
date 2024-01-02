@@ -1186,4 +1186,10 @@
   <data name="TbSettingsMainServerBackup" xml:space="preserve">
     <value>主-備 模式</value>
   </data>
+  <data name="TbSettingsKeepLowestLatency" xml:space="preserve">
+    <value>始終最低延遲伺服器模式</value>
+  </data>
+  <data name="TbSettingsLatencyLowerRatio" xml:space="preserve">
+    <value>延遲降低到的比例(0.1~0.9)</value>
+  </data>
 </root>

@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using MaterialDesignThemes.Wpf;
 using Splat;
 using System;
 using System.Collections.Generic;
@@ -129,7 +130,10 @@ namespace v2rayN.Handler
                 _noticeHandler = Locator.Current.GetService<NoticeHandler>();
                 DownloadHandle downloadHandle = new();
                 long failtimestart = 0;
+                long lastlatencytesttime = 0;
                 int LastServerSelectMode = -1;
+               
+                long latencycurrent = 0;
                 List<ProfileItem> listprofile = new List<ProfileItem>();
                 List<ProfileItem> listprofileMain = new List<ProfileItem>();
                 while (!bStop)
@@ -139,6 +143,7 @@ namespace v2rayN.Handler
                     int iTestInterval = iFailTimeMax / 3;
                     int ServerSelectMode = LazyConfig.Instance.GetConfig().autoSwitchItem.ServerSelectMode;
                     int AutoSwitchMode = LazyConfig.Instance.GetConfig().autoSwitchItem.mode;
+                    double LatencyLowerRatio = LazyConfig.Instance.GetConfig().autoSwitchItem.LatencyLowerRatio; 
 
                     Thread.Sleep(iTestInterval * 1000);
                     int res = downloadHandle.RunAvailabilityCheck(null).Result;
@@ -148,7 +153,7 @@ namespace v2rayN.Handler
                         _noticeHandler?.SendMessage("Current server test failed!",true);
                         if (failtimestart == 0)
                             failtimestart = GetTimestamp(DateTime.Now);
-                        if (GetTimestamp(DateTime.Now) - failtimestart >= iFailTimeMax || testResultItemsMain?.Count>0)
+                        if (GetTimestamp(DateTime.Now) - failtimestart >= iFailTimeMax || testResultItemsMain?.Count>0 || testResultItems.Count>0)
                         {
 
                             if (testResultItems.Count == 0 || listprofile.Count == 0 || ServerSelectMode!= LastServerSelectMode)
@@ -194,6 +199,8 @@ namespace v2rayN.Handler
                                 {
                                     for (int i = testResultItems.Count - 1; i >= 0; i--)
                                     {
+                                        if (testResultItems[i].indexId == _config.indexId)
+                                            latencycurrent = testResultItems[i].latency;
                                         if (testResultItems[i].latency <= 0 && testResultItems[i].indexId != _config.indexId)
                                             testResultItems.RemoveAt(i);
                                     }
@@ -216,6 +223,8 @@ namespace v2rayN.Handler
                                 {
                                     for (int i = testResultItems.Count - 1; i >= 0; i--)
                                     {
+                                        if(testResultItems[i].indexId == _config.indexId)
+                                            latencycurrent = testResultItems[i].latency;
                                         if (testResultItems[i].latency <= 0 || testResultItems[i].indexId == _config.indexId)
                                             testResultItems.RemoveAt(i);
                                     }
@@ -332,6 +341,53 @@ namespace v2rayN.Handler
                                 testResultItems.Clear();
                                 listprofile.Clear();
                             }                                
+                        }
+                        else if(AutoSwitchMode==2)
+                        {
+                            if (lastlatencytesttime == 0)
+                                lastlatencytesttime = GetTimestamp(DateTime.Now);
+
+                            if (GetTimestamp(DateTime.Now) - lastlatencytesttime >= iFailTimeMax)
+                            {
+                                if (listprofile.Count <= 0)
+                                    listprofile = LazyConfig.Instance.ProfileItemsAutoSwitch();
+
+                                testResultItems.Clear();
+                                var _coreHandler = new CoreHandler(_config, (bool x, string y) => { });
+
+                                if (ServerSelectMode == 0 || ServerSelectMode == 1)
+                                    new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Tcping, UpdateSpeedtestHandler);
+                                else if (ServerSelectMode == 2)
+                                    new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Realping, UpdateSpeedtestHandler);
+
+                                while (testResultItems.Count < listprofile.Count)
+                                {
+                                    Thread.Sleep(20);
+                                }
+
+                                testResultItems.Sort((x, y) => x.latency.CompareTo(y.latency));
+                                latencycurrent = -1;
+                                for (int i = testResultItems.Count - 1; i >= 0; i--)
+                                {
+                                    if (testResultItems[i].indexId == _config.indexId)
+                                        latencycurrent = testResultItems[i].latency;
+                                    if (testResultItems[i].latency <= 0 || testResultItems[i].indexId == _config.indexId)
+                                        testResultItems.RemoveAt(i);
+                                }
+
+                                if (testResultItems.Count > 0 && (latencycurrent <=0 || testResultItems[0].latency <= latencycurrent*(LatencyLowerRatio)))
+                                {
+                                    setDefaultServerDelegates(testResultItems[0].indexId);
+                                    testResultItems.RemoveAt(0);
+                                }
+                                lastlatencytesttime = GetTimestamp(DateTime.Now);
+                            }
+                            else
+                            {
+                                failtimestart = 0;
+                                testResultItems.Clear();
+                                listprofile.Clear();
+                            }
                         }
                         else
                         {

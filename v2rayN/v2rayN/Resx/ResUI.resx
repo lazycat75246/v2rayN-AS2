@@ -1189,4 +1189,10 @@
   <data name="TbSettingsMainServers" xml:space="preserve">
     <value>Main servers</value>
   </data>
+  <data name="TbSettingsKeepLowestLatency" xml:space="preserve">
+    <value>Always lowest latency server mode</value>
+  </data>
+  <data name="TbSettingsLatencyLowerRatio" xml:space="preserve">
+    <value>Latency reduction ratio (0.1~0.9)</value>
+  </data>
 </root>
