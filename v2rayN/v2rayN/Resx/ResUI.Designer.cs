@@ -2735,6 +2735,15 @@ namespace v2rayN.Resx {
         }
         
         /// <summary>
+        ///   查找类似 Always lowest latency server mode 的本地化字符串。
+        /// </summary>
+        public static string TbSettingsKeepLowestLatency {
+            get {
+                return ResourceManager.GetString("TbSettingsKeepLowestLatency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Keep older when deduplication 的本地化字符串。
         /// </summary>
         public static string TbSettingsKeepOlderDedupl {
@@ -2749,6 +2758,15 @@ namespace v2rayN.Resx {
         public static string TbSettingsLanguage {
             get {
                 return ResourceManager.GetString("TbSettingsLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Latency reduction ratio (0.1~0.9) 的本地化字符串。
+        /// </summary>
+        public static string TbSettingsLatencyLowerRatio {
+            get {
+                return ResourceManager.GetString("TbSettingsLatencyLowerRatio", resourceCulture);
             }
         }
         

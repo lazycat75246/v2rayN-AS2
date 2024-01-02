@@ -1,4 +1,5 @@
 ﻿using DynamicData.Binding;
+using ProtosLib.Statistics;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Splat;
@@ -12,7 +13,7 @@ namespace v2rayN.ViewModels
 {
     public class OptionSettingViewModel : ReactiveObject
     {
-        private static Config _config;
+        private static Mode.Config _config;
         private NoticeHandler? _noticeHandler;
         private Window _view;
 
@@ -103,6 +104,7 @@ namespace v2rayN.ViewModels
         [Reactive] public int ServerSelectMode { get; set; }
         [Reactive] public int AutoSwitchMode { get; set; }
         [Reactive] public int FailTimeMax { get; set; }
+        [Reactive] public double LatencyLowerRatio { get; set; }
 
         public ReactiveCommand<Unit, Unit> SaveCmd { get; }
 
@@ -192,7 +194,7 @@ namespace v2rayN.ViewModels
             FailTimeMax = _config.autoSwitchItem.FailTimeMax;
             AutoSwitchMode = _config.autoSwitchItem.mode;
             ServerSelectMode = _config.autoSwitchItem.ServerSelectMode;
-
+            LatencyLowerRatio= _config.autoSwitchItem.LatencyLowerRatio;
 
             var listprofile = LazyConfig.Instance.ProfileItemsAutoSwitch();
 
@@ -366,6 +368,7 @@ namespace v2rayN.ViewModels
             _config.autoSwitchItem.mode = AutoSwitchMode;
             _config.autoSwitchItem.ServerSelectMode=ServerSelectMode;
             _config.autoSwitchItem.FailTimeMax = FailTimeMax;
+            _config.autoSwitchItem.LatencyLowerRatio = LatencyLowerRatio;
 
             foreach (var item in MainServerItems)
             {
