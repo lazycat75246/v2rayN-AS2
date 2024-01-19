@@ -769,9 +769,9 @@ namespace v2rayN.ViewModels
             {
                 Logging.SaveLog("MyAppExit Begin");
 
-                StorageUI();
+                StorageUI();                
                 ConfigHandler.SaveConfig(_config);
-
+                ServerAutoSwitchs.Stop();
                 //HttpProxyHandle.CloseHttpAgent(config);
                 if (blWindowsShutDown)
                 {

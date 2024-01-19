@@ -58,7 +58,7 @@ namespace v2rayN.Handler
         {
             bStop = true;
             if(taskmain!=null)
-                taskmain.Wait();
+               taskmain.Wait();
             taskmain = null;
         }
         public void SetDelegate(SetDefaultServerDelegate s = null) {
@@ -147,7 +147,10 @@ namespace v2rayN.Handler
 
                     Thread.Sleep(iTestInterval * 1000);
                     int res = downloadHandle.RunAvailabilityCheck(null).Result;
-                    setTestResultDelegates(_config.indexId, res.ToString(), "");
+                    if (!bStop)
+                        Task.Run(() => setTestResultDelegates(_config.indexId, res.ToString(), ""));
+                    else
+                        break;
                     if (res <= 0)
                     {
                         _noticeHandler?.SendMessage("Current server test failed!",true);
@@ -177,11 +180,12 @@ namespace v2rayN.Handler
                                         new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Tcping, UpdateSpeedtestHandler);
                                     else if (ServerSelectMode == 2)
                                         new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Realping, UpdateSpeedtestHandler);
-
-                                    while (testResultItems.Count < listprofile.Count)
+                                    if (bStop) break;
+                                    while (!bStop && testResultItems.Count < listprofile.Count)
                                     {
                                         Thread.Sleep(20);
                                     }
+                                    if (bStop) break;
                                     if (ServerSelectMode == 0)
                                     {
                                         List<TestResultItem> templist = new List<TestResultItem>();
@@ -295,12 +299,12 @@ namespace v2rayN.Handler
                                     new SpeedtestHandler(_config, _coreHandler, listprofileMain, Mode.ESpeedActionType.Tcping, UpdateSpeedtestHandlerMain);
                                 else if (ServerSelectMode == 2)
                                     new SpeedtestHandler(_config, _coreHandler, listprofileMain, Mode.ESpeedActionType.Realping, UpdateSpeedtestHandlerMain);
-
-                                while (testResultItemsMain.Count < listprofileMain.Count)
+                                if (bStop) break;
+                                while (!bStop && testResultItemsMain.Count < listprofileMain.Count)
                                 {
                                     Thread.Sleep(20);
                                 }
-
+                                if (bStop) break;
                                 testResultItemsMain.Sort((x, y) => x.latency.CompareTo(y.latency));
 
                                 foreach (var item in testResultItemsMain)
@@ -359,12 +363,12 @@ namespace v2rayN.Handler
                                     new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Tcping, UpdateSpeedtestHandler);
                                 else if (ServerSelectMode == 2)
                                     new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Realping, UpdateSpeedtestHandler);
-
-                                while (testResultItems.Count < listprofile.Count)
+                                if (bStop) break;
+                                while (!bStop && testResultItems.Count < listprofile.Count)
                                 {
                                     Thread.Sleep(20);
                                 }
-
+                                if (bStop) break;
                                 testResultItems.Sort((x, y) => x.latency.CompareTo(y.latency));
                                 latencycurrent = -1;
                                 for (int i = testResultItems.Count - 1; i >= 0; i--)
