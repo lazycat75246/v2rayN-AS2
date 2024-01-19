@@ -1694,7 +1694,7 @@ namespace v2rayN.ViewModels
                         _setAutoSwitchTog(false);
                         _config.autoSwitchItem.EnableAutoSwitch = false;
                         EnableAutoSwitch = false;
-                        ConfigHandler.SaveConfig(ref _config);
+                        ConfigHandler.SaveConfig(_config);
                         return;
                     }
                     ServerAutoSwitchs.Start();
@@ -1706,7 +1706,7 @@ namespace v2rayN.ViewModels
                         ServerAutoSwitchs.Stop();
                     });
                 }                 
-                ConfigHandler.SaveConfig(ref _config);
+                ConfigHandler.SaveConfig(_config);
             }
         }
 

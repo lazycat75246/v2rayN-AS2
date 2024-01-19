@@ -296,7 +296,7 @@ namespace v2rayN.Handler
                                         _config.mainServerItems?.Remove(item4);
                                 }
                             }
-                            ConfigHandler.SaveConfig(ref _config);
+                            ConfigHandler.SaveConfig(_config);
                         }
                         _updateFunc(false,
                             ret > 0

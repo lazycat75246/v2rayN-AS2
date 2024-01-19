@@ -714,7 +714,7 @@ namespace v2rayN.Views
             if(!item.autoSwitch)
             {
                 _config.mainServerItems?.Remove(item.indexId);
-                ConfigHandler.SaveConfig(ref _config);
+                ConfigHandler.SaveConfig(_config);
             }
                 
 
