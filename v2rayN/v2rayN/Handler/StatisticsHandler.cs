@@ -86,9 +86,7 @@ namespace v2rayN.Handler
                 _serverStatItem.todayDown += server.proxyDown;
                 _serverStatItem.totalUp += server.proxyUp;
                 _serverStatItem.totalDown += server.proxyDown;
-            }
-            if (Global.ShowInTaskbar)
-            {
+
                 server.indexId = _config.indexId;
                 server.todayUp = _serverStatItem.todayUp;
                 server.todayDown = _serverStatItem.todayDown;
