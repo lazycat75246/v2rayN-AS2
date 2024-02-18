@@ -317,7 +317,7 @@ namespace v2rayN
             var parts = query[1..].Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var part in parts)
             {
-                var keyValue = part.Split(['=']);
+                var keyValue = part.Split('=');
                 if (keyValue.Length != 2)
                 {
                     continue;
