@@ -12,6 +12,7 @@ namespace v2rayN.Handler
         private StatsService.StatsServiceClient? _client;
         private bool _exitFlag;
         private Action<ServerSpeedItem> _updateFunc;
+        private int stateport = 0;
 
         public StatisticsV2ray(Mode.Config config, Action<ServerSpeedItem> update)
         {
@@ -30,6 +31,7 @@ namespace v2rayN.Handler
             {
                 try
                 {
+                    stateport = Global.StatePort;
                     _channel = GrpcChannel.ForAddress($"{Global.HttpProtocol}{Global.Loopback}:{Global.StatePort}");
                     _client = new StatsService.StatsServiceClient(_channel);
                 }
@@ -51,12 +53,24 @@ namespace v2rayN.Handler
             {
                 try
                 {
+                    if(stateport!= Global.StatePort || _channel?.State == ConnectivityState.Shutdown)
+                    {
+                        _client = null;
+                        if(_channel?.State != ConnectivityState.Shutdown)
+                        _channel?.ShutdownAsync().Wait();
+                        _channel?.Dispose();
+                        _channel = null;                     
+                    }
+
+                    if(_channel is null )
+                        GrpcInit();
+
                     if (_channel?.State == ConnectivityState.Ready)
                     {
                         QueryStatsResponse? res = null;
                         try
                         {
-                            res = await _client.QueryStatsAsync(new QueryStatsRequest() { Pattern = "", Reset = true });
+                            res = await _client.QueryStatsAsync(new QueryStatsRequest() { Pattern = "", Reset = true },null, DateTime.UtcNow.AddSeconds(3));
                         }
                         catch
                         {
@@ -69,7 +83,7 @@ namespace v2rayN.Handler
                         }
                     }
                     await Task.Delay(1000);
-                    await _channel.ConnectAsync();
+                    _channel.ConnectAsync().Wait(3000);
                 }
                 catch
                 {

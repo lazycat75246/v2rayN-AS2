@@ -271,7 +271,8 @@ namespace v2rayN.ViewModels
         public ServerAutoSwitch ServerAutoSwitchs= new ServerAutoSwitch();
 
         #region Init
-
+        private long lastupdatestatics = 0;
+        private long lastsavestatics = 0;
         public MainWindowViewModel(ISnackbarMessageQueue snackbarMessageQueue, Action<EViewAction> updateView)
         {
             _updateView = updateView;
@@ -662,10 +663,10 @@ namespace v2rayN.ViewModels
             {
                 Application.Current.Dispatcher.Invoke((Action)(() =>
                 {
-                    if (!Global.ShowInTaskbar)
-                    {
-                        return;
-                    }
+                    //if (!Global.ShowInTaskbar)
+                    //{
+                    //    return;
+                   // }
 
                     SpeedProxyDisplay = string.Format(ResUI.SpeedDisplayText, Global.ProxyTag, Utils.HumanFy(update.proxyUp), Utils.HumanFy(update.proxyDown));
                     SpeedDirectDisplay = string.Format(ResUI.SpeedDisplayText, Global.DirectTag, Utils.HumanFy(update.directUp), Utils.HumanFy(update.directDown));
@@ -673,8 +674,10 @@ namespace v2rayN.ViewModels
                     if (update.proxyUp + update.proxyDown > 0)
                     {
                         var second = DateTime.Now.Second;
-                        if (second % 3 == 0)
+                        var timenow= ServerAutoSwitch.GetTimestamp(DateTime.Now);
+                        if (timenow-lastupdatestatics>=3)
                         {
+                            lastupdatestatics = timenow;
                             var item = _profileItems.Where(it => it.indexId == update.indexId).FirstOrDefault();
                             if (item != null)
                             {
@@ -694,6 +697,13 @@ namespace v2rayN.ViewModels
                                     _profileItems.Replace(item, JsonUtils.DeepCopy(item));
                                 }
                             }
+                        }
+                        if (lastupdatestatics == 0)
+                            lastsavestatics = timenow;
+                        if (timenow - lastsavestatics >= 60)
+                        {
+                            lastsavestatics = timenow;
+                            _statistics?.SaveTo();
                         }
                     }
                 }));

@@ -135,11 +135,11 @@ namespace v2rayN.Handler
         {
             try
             {
-                int defaultPort = 9090;
-                if (!Utils.PortInUse(defaultPort))
-                {
-                    return defaultPort;
-                }
+                //int defaultPort = Global.StatePort > 0 ? Global.StatePort : 9090;
+                //if (!Utils.PortInUse(defaultPort))
+                //{
+                //    return defaultPort;
+                //}
 
                 TcpListener l = new(IPAddress.Loopback, 0);
                 l.Start();

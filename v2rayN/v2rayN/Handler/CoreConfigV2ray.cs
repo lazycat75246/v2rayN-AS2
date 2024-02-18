@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using v2rayN.Mode;
 using v2rayN.Resx;
 
@@ -721,11 +722,11 @@ namespace v2rayN.Handler
                     outbound.settings.userLevel = 0;
                 }
 
-                var obj = JsonUtils.ParseJson(normalDNS) ?? [];
+                var obj = JsonUtils.ParseJson(normalDNS) ?? new JObject();
 
                 if (!obj.ContainsKey("servers"))
                 {
-                    List<string> servers = [];
+                    List<string> servers = new List<string>();
                     string[] arrDNS = normalDNS.Split(',');
                     foreach (string str in arrDNS)
                     {
@@ -773,6 +774,28 @@ namespace v2rayN.Handler
             return 0;
         }
 
+        private int GetFreePort()
+        {
+            try
+            {
+                int defaultPort = Global.StatePort>0? Global.StatePort: 9090;
+                if (!Utils.PortInUse(defaultPort))
+                {
+                    return defaultPort;
+                }
+
+                TcpListener l = new(IPAddress.Loopback, 0);
+                l.Start();
+                int port = ((IPEndPoint)l.LocalEndpoint).Port;
+                l.Stop();
+                return port;
+            }
+            catch
+            {
+            }
+            return 69090;
+        }
+
         private int GenStatistic(V2rayConfig v2rayConfig)
         {
             if (_config.guiItem.enableStatistics)
@@ -801,6 +824,7 @@ namespace v2rayN.Handler
                     Inboundsettings4Ray apiInboundSettings = new();
                     apiInbound.tag = tag;
                     apiInbound.listen = Global.Loopback;
+                    Global.StatePort = GetFreePort();
                     apiInbound.port = Global.StatePort;
                     apiInbound.protocol = Global.InboundAPIProtocal;
                     apiInboundSettings.address = Global.Loopback;
