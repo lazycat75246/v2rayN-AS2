@@ -17,11 +17,7 @@ namespace v2rayN.Handler
 {
     public delegate void SetDefaultServerDelegate(string s);
     public delegate void SetTestResultDelegate(string i, string d, string s);
-    public class TestResultItem
-    {
-        public string indexId { get; set; }
-        public long latency { get; set; }
-    }
+
     public class TestSuccessTimeItem
     {
         public string indexId { get; set; }
@@ -93,6 +89,13 @@ namespace v2rayN.Handler
                     latency = i
                 });
                 setTestResultDelegates(id, dl, speed);
+            }
+        }
+        private void updateresult(ref List<TestResultItem> listresult)
+        {
+            foreach (var it in listresult)
+            {
+                setTestResultDelegates(it.indexId, it.latency.ToString(), "");
             }
         }
         private void UpdateSpeedtestHandlerMain(string id, string dl, string speed)
@@ -176,16 +179,21 @@ namespace v2rayN.Handler
                                 {
                                     var _coreHandler = new CoreHandler(_config, (bool x, string y) => { });
 
-                                    if (ServerSelectMode == 0 || ServerSelectMode == 1)
-                                        new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Tcping, UpdateSpeedtestHandler);
-                                    else if (ServerSelectMode == 2)
-                                        new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Realping, UpdateSpeedtestHandler);
+                                    var sh = new SpeedtestHandler2(_config);
+                                    var type = Mode.ESpeedActionType.Tcping;
+                                    if (ServerSelectMode == 2)
+                                        type = Mode.ESpeedActionType.Realping;
+                                    sh.RunPingNew(_config, _coreHandler, listprofile, type, ref testResultItems);
+                                    updateresult(ref testResultItems);
+                                    //var testresulttimestart = GetTimestamp(DateTime.Now);
+                                    //while (!bStop && testResultItems.Count < listprofile.Count && GetTimestamp(DateTime.Now)-testresulttimestart<=15)
+                                    //{
+                                    //    Thread.Sleep(20);
+                                    //}
+
+
                                     if (bStop) break;
-                                    while (!bStop && testResultItems.Count < listprofile.Count)
-                                    {
-                                        Thread.Sleep(20);
-                                    }
-                                    if (bStop) break;
+
                                     if (ServerSelectMode == 0)
                                     {
                                         List<TestResultItem> templist = new List<TestResultItem>();
@@ -295,15 +303,24 @@ namespace v2rayN.Handler
 
                                 var _coreHandler = new CoreHandler(_config, (bool x, string y) => { });
 
-                                if (ServerSelectMode == 0 || ServerSelectMode == 1)
-                                    new SpeedtestHandler(_config, _coreHandler, listprofileMain, Mode.ESpeedActionType.Tcping, UpdateSpeedtestHandlerMain);
-                                else if (ServerSelectMode == 2)
-                                    new SpeedtestHandler(_config, _coreHandler, listprofileMain, Mode.ESpeedActionType.Realping, UpdateSpeedtestHandlerMain);
-                                if (bStop) break;
-                                while (!bStop && testResultItemsMain.Count < listprofileMain.Count)
-                                {
-                                    Thread.Sleep(20);
-                                }
+                                var sh = new SpeedtestHandler2(_config);
+                                var type = Mode.ESpeedActionType.Tcping;
+                                if (ServerSelectMode == 2)
+                                    type = Mode.ESpeedActionType.Realping;
+                                sh.RunPingNew(_config, _coreHandler, listprofileMain, type, ref testResultItemsMain);
+                                updateresult(ref testResultItemsMain);
+
+                                //if (ServerSelectMode == 0 || ServerSelectMode == 1)
+                                //    new SpeedtestHandler(_config, _coreHandler, listprofileMain, Mode.ESpeedActionType.Tcping, UpdateSpeedtestHandlerMain);
+                                //else if (ServerSelectMode == 2)
+                                //    new SpeedtestHandler(_config, _coreHandler, listprofileMain, Mode.ESpeedActionType.Realping, UpdateSpeedtestHandlerMain);
+                                //if (bStop) break;
+                                //var testresulttimestart = GetTimestamp(DateTime.Now);
+                                //while (!bStop && testResultItemsMain.Count < listprofileMain.Count && GetTimestamp(DateTime.Now) - testresulttimestart <= 15)
+                                //{
+                                //    Thread.Sleep(20);
+                                //}
+
                                 if (bStop) break;
                                 testResultItemsMain.Sort((x, y) => x.latency.CompareTo(y.latency));
 
@@ -359,15 +376,24 @@ namespace v2rayN.Handler
                                 testResultItems.Clear();
                                 var _coreHandler = new CoreHandler(_config, (bool x, string y) => { });
 
-                                if (ServerSelectMode == 0 || ServerSelectMode == 1)
-                                    new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Tcping, UpdateSpeedtestHandler);
-                                else if (ServerSelectMode == 2)
-                                    new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Realping, UpdateSpeedtestHandler);
-                                if (bStop) break;
-                                while (!bStop && testResultItems.Count < listprofile.Count)
-                                {
-                                    Thread.Sleep(20);
-                                }
+                                var sh = new SpeedtestHandler2(_config);
+                                var type = Mode.ESpeedActionType.Tcping;
+                                if (ServerSelectMode == 2)
+                                    type = Mode.ESpeedActionType.Realping;
+                                sh.RunPingNew(_config, _coreHandler, listprofile, type, ref testResultItems);
+                                updateresult(ref testResultItems);
+
+                                //if (ServerSelectMode == 0 || ServerSelectMode == 1)
+                                //    new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Tcping, UpdateSpeedtestHandler);
+                                //else if (ServerSelectMode == 2)
+                                //    new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Realping, UpdateSpeedtestHandler);
+                                //if (bStop) break;
+                                //var testresulttimestart = GetTimestamp(DateTime.Now);
+                                //while (!bStop && testResultItems.Count < listprofile.Count && GetTimestamp(DateTime.Now) - testresulttimestart <= 15)
+                                //{
+                                //    Thread.Sleep(20);
+                                //}
+
                                 if (bStop) break;
                                 testResultItems.Sort((x, y) => x.latency.CompareTo(y.latency));
                                 latencycurrent = -1;
