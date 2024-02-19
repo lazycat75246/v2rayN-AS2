@@ -9,6 +9,9 @@ namespace v2rayN.Handler
     /// </summary>
     internal class CoreConfigHandler
     {
+        public delegate void StatePortChange();
+        public static event StatePortChange StatePortChangeEvent;
+
         public static int GenerateClientConfig(ProfileItem node, string? fileName, out string msg, out string content)
         {
             content = string.Empty;
@@ -65,6 +68,7 @@ namespace v2rayN.Handler
                 msg = ResUI.FailedGenDefaultConfiguration;
                 return -1;
             }
+            StatePortChangeEvent();
             return 0;
         }
 

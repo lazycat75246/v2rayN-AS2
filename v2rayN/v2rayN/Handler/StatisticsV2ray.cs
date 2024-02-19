@@ -13,7 +13,7 @@ namespace v2rayN.Handler
         private bool _exitFlag;
         private Action<ServerSpeedItem> _updateFunc;
         private int stateport = 0;
-
+        private Task _task;
         public StatisticsV2ray(Mode.Config config, Action<ServerSpeedItem> update)
         {
             _config = config;
@@ -22,7 +22,7 @@ namespace v2rayN.Handler
 
             GrpcInit();
 
-            Task.Run(Run);
+            _task=Task.Run(Run);
         }
 
         private void GrpcInit()
@@ -45,8 +45,21 @@ namespace v2rayN.Handler
         public void Close()
         {
             _exitFlag = true;
+            if (_task != null)
+            {
+                _task.Wait();
+                _task = null;
+            }
         }
+        public void Start()
+        {
+            if (stateport == Global.StatePort)
+                return;
 
+            Close();
+            _exitFlag = false;
+            _task = Task.Run(Run);
+        }
         private async void Run()
         {
             while (!_exitFlag)

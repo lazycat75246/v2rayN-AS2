@@ -32,6 +32,7 @@ namespace v2rayN.Handler
 
             _statisticsV2Ray = new StatisticsV2ray(config, UpdateServerStat);
             _statisticsSingbox = new StatisticsSingbox(config, UpdateServerStat);
+            CoreConfigHandler.StatePortChangeEvent +=new CoreConfigHandler.StatePortChange(_statisticsV2Ray.Start);
         }
 
         public void Close()
@@ -87,13 +88,15 @@ namespace v2rayN.Handler
                 _serverStatItem.totalUp += server.proxyUp;
                 _serverStatItem.totalDown += server.proxyDown;
 
-                server.indexId = _config.indexId;
-                server.todayUp = _serverStatItem.todayUp;
-                server.todayDown = _serverStatItem.todayDown;
-                server.totalUp = _serverStatItem.totalUp;
-                server.totalDown = _serverStatItem.totalDown;
-                _updateFunc(server);
+
             }
+
+            server.indexId = _config.indexId;
+            server.todayUp = _serverStatItem.todayUp;
+            server.todayDown = _serverStatItem.todayDown;
+            server.totalUp = _serverStatItem.totalUp;
+            server.totalDown = _serverStatItem.totalDown;
+            _updateFunc(server);
         }
 
         private void GetServerStatItem(string indexId)
