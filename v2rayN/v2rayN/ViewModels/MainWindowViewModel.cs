@@ -605,7 +605,7 @@ namespace v2rayN.ViewModels
             _coreHandler = new CoreHandler(_config, UpdateHandler);
             Locator.CurrentMutable.RegisterLazySingleton(() => _coreHandler, typeof(CoreHandler));
 
-            if (_config.guiItem.enableStatistics)
+            //if (_config.guiItem.enableStatistics)
             {
                 _statistics = new StatisticsHandler(_config, UpdateStatisticsHandler);
             }

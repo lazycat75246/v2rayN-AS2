@@ -20,10 +20,10 @@ namespace v2rayN.Handler
         {
             _config = config;
             Enable = config.guiItem.enableStatistics;
-            if (!Enable)
-            {
-                return;
-            }
+            //if (!Enable)
+            //{
+            //    return;
+            //}
 
             _updateFunc = update;
 
