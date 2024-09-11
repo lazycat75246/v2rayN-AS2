@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using v2rayN.Mode;
 using v2rayN.Resx;
 
@@ -781,11 +782,32 @@ namespace v2rayN.Handler
             }
             return 0;
         }
+        private int GetFreePort()
+        {
+            try
+            {
+                int defaultPort = Global.StatePort > 0 ? Global.StatePort : 9090;
+                if (!Utils.PortInUse(defaultPort))
+                {
+                    return defaultPort;
+                }
 
+                TcpListener l = new(IPAddress.Loopback, 0);
+                l.Start();
+                int port = ((IPEndPoint)l.LocalEndpoint).Port;
+                l.Stop();
+                return port;
+            }
+            catch
+            {
+            }
+            return 69090;
+        }
         private int GenStatistic(SingboxConfig singboxConfig)
         {
             if (_config.guiItem.enableStatistics)
             {
+                Global.StatePort = GetFreePort();
                 singboxConfig.experimental = new Experimental4Sbox()
                 {
                     //cache_file = new CacheFile4Sbox()
@@ -800,6 +822,7 @@ namespace v2rayN.Handler
                     //        enabled = true,
                     //    }
                     //},
+
                     clash_api = new Clash_Api4Sbox()
                     {
                         external_controller = $"{Global.Loopback}:{Global.StatePort}",

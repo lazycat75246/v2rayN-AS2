@@ -10,6 +10,7 @@ namespace v2rayN.Handler
         private bool _exitFlag;
         private ClientWebSocket? webSocket;
         private string url = string.Empty;
+        private int stateport = 0;
         private Action<ServerSpeedItem> _updateFunc;
 
         public StatisticsSingbox(Config config, Action<ServerSpeedItem> update)
@@ -27,6 +28,7 @@ namespace v2rayN.Handler
 
             try
             {
+                stateport = Global.StatePort;
                 url = $"ws://{Global.Loopback}:{Global.StatePort}/traffic";
 
                 if (webSocket == null)
@@ -54,7 +56,15 @@ namespace v2rayN.Handler
                 Logging.SaveLog(ex.Message, ex);
             }
         }
+        public void Start()
+        {
+            if (stateport == Global.StatePort)
+                return;
 
+            Close();
+            _exitFlag = false;
+            Task.Run(() => Run());
+        }
         private async void Run()
         {
             Init();
@@ -65,7 +75,7 @@ namespace v2rayN.Handler
                 {
                     if (webSocket != null)
                     {
-                        if (webSocket.State == WebSocketState.Aborted
+                        if (stateport != Global.StatePort || webSocket.State == WebSocketState.Aborted
                             || webSocket.State == WebSocketState.Closed)
                         {
                             webSocket.Abort();

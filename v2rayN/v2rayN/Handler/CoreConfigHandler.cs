@@ -68,7 +68,8 @@ namespace v2rayN.Handler
                 msg = ResUI.FailedGenDefaultConfiguration;
                 return -1;
             }
-            StatePortChangeEvent();
+            if(StatePortChangeEvent!=null)
+                StatePortChangeEvent();
             return 0;
         }
 

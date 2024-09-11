@@ -9,6 +9,8 @@ using Splat;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Net.Sockets;
+using System.Net;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
@@ -597,15 +599,35 @@ namespace v2rayN.ViewModels
 
             Global.ShowInTaskbar = true;
         }
+        private int GetFreePort()
+        {
+            try
+            {
+                int defaultPort = Global.StatePort > 0 ? Global.StatePort : 9090;
+                if (!Utils.PortInUse(defaultPort))
+                {
+                    return defaultPort;
+                }
 
+                TcpListener l = new(IPAddress.Loopback, 0);
+                l.Start();
+                int port = ((IPEndPoint)l.LocalEndpoint).Port;
+                l.Stop();
+                return port;
+            }
+            catch
+            {
+            }
+            return 69090;
+        }
         private void Init()
         {
             ConfigHandler.InitBuiltinRouting(_config);
             ConfigHandler.InitBuiltinDNS(_config);
             _coreHandler = new CoreHandler(_config, UpdateHandler);
             Locator.CurrentMutable.RegisterLazySingleton(() => _coreHandler, typeof(CoreHandler));
-
-            //if (_config.guiItem.enableStatistics)
+            Global.StatePort = GetFreePort();
+            if (_config.guiItem.enableStatistics)
             {
                 _statistics = new StatisticsHandler(_config, UpdateStatisticsHandler);
             }
