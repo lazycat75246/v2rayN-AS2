@@ -79,6 +79,15 @@ namespace v2rayN.Resx {
         }
         
         /// <summary>
+        ///   查找类似 blank=disable  all=add all server  keywords Separated by vertical lines 的本地化字符串。
+        /// </summary>
+        public static string AutoSwitchFilterTips {
+            get {
+                return ResourceManager.GetString("AutoSwitchFilterTips", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Batch export subscription to clipboard successfully 的本地化字符串。
         /// </summary>
         public static string BatchExportSubscriptionSuccessfully {
@@ -367,11 +376,20 @@ namespace v2rayN.Resx {
         }
         
         /// <summary>
-        ///   查找类似 Automatic update interval(minutes) 的本地化字符串。
+        ///   查找类似 AutoSwitch 的本地化字符串。
         /// </summary>
         public static string LvAutoSwitch {
             get {
                 return ResourceManager.GetString("LvAutoSwitch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Add server to autoswitch list by keywords 的本地化字符串。
+        /// </summary>
+        public static string LvAutoSwitchFilter {
+            get {
+                return ResourceManager.GetString("LvAutoSwitchFilter", resourceCulture);
             }
         }
         

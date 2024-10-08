@@ -16,6 +16,8 @@ namespace v2rayN.Mode
 
         public bool enabled { get; set; } = true;
 
+        public string? AddToAutoSwitchfilter { get; set; }
+
         public string userAgent { get; set; } = string.Empty;
 
         public int sort { get; set; }

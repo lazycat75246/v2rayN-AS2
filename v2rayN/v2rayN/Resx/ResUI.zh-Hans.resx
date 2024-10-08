@@ -1225,4 +1225,10 @@
   <data name="TbSettingsLatencyLowerRatio" xml:space="preserve">
     <value>延迟降低到的比例(0.1~0.9)</value>
   </data>
+  <data name="LvAutoSwitchFilter" xml:space="preserve">
+    <value>符合关键词的节点添加到自动切换</value>
+  </data>
+  <data name="AutoSwitchFilterTips" xml:space="preserve">
+    <value>空白=不添加  all=添加所有  香港|台湾=所有香港和台湾节点</value>
+  </data>
 </root>

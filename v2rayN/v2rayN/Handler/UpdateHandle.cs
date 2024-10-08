@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using MaterialDesignThemes.Wpf;
 using Splat;
 using System.Diagnostics;
 using System.IO;
@@ -278,24 +279,52 @@ namespace v2rayN.Handler
                         }
                         else
                         {
-                            foreach (var item3 in listprofile)
+                            var addreg = item.AddToAutoSwitchfilter == null ? "" : item.AddToAutoSwitchfilter;
+                            //var addreg = "ALL";
+                            if (addreg!="")
                             {
-                                var item2 = LazyConfig.Instance.GetProfileItemRemarks(item3.remarks);
-                                var item4 = _config.mainServerItems?.Find(x => x == item3.indexId);
-                                if (item2 != null)
+                                addreg=addreg.Trim();
+                                var unaddreg = ".*(剩余|到期|距离|最新|无法|购买|流量|时间|过期|剩餘|到期|距離|最新|無法|購買|流量|時間|過期|expire|left).*";
+                                if (addreg.IndexOf("all", StringComparison.OrdinalIgnoreCase) >= 0)
                                 {
-                                    item2.autoSwitch = true;
-                                    SqliteHelper.Instance.Update(item2);
-           
-                                    if (item4 != null)
-                                        item4 = item2.indexId;
+                                    addreg = ".*";
                                 }
                                 else
                                 {
-                                    if (item4 != null)
-                                        _config.mainServerItems?.Remove(item4);
+                                    if (addreg[0] != '^' && addreg[0] != '.')
+                                        addreg = @".*" + addreg;
+                                    if (addreg[addreg.Length - 1] != '$' && addreg[addreg.Length - 1] != '*')
+                                        addreg = addreg + @".*";
+                                }
+                                var listprofile2 = LazyConfig.Instance.GetProfileItemsReg(id, addreg,unaddreg);
+                                foreach (var item5 in listprofile2)
+                                {
+                                    item5.autoSwitch=true;
+                                    SqliteHelper.Instance.Update(item5);
                                 }
                             }
+                            else
+                            {
+                                foreach (var item3 in listprofile)
+                                {
+                                    var item2 = LazyConfig.Instance.GetProfileItemRemarks(item3.remarks);
+                                    var item4 = _config.mainServerItems?.Find(x => x == item3.indexId);
+                                    if (item2 != null)
+                                    {
+                                        item2.autoSwitch = true;
+                                        SqliteHelper.Instance.Update(item2);
+
+                                        if (item4 != null)
+                                            item4 = item2.indexId;
+                                    }
+                                    else
+                                    {
+                                        if (item4 != null)
+                                            _config.mainServerItems?.Remove(item4);
+                                    }
+                                }
+                            }
+                            
                             ConfigHandler.SaveConfig(_config);
                         }
                         _updateFunc(false,

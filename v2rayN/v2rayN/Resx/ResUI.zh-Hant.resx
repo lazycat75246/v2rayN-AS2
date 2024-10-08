@@ -1162,22 +1162,22 @@
   <data name="TbSettingsUseSystemHosts" xml:space="preserve">
     <value>使用系統hosts</value>
   </data>
-	<data name="menuAddTuicServer" xml:space="preserve">
+  <data name="menuAddTuicServer" xml:space="preserve">
     <value>新增[Tuic]伺服器</value>
   </data>
-	<data name="LvPrevProfile" xml:space="preserve">
+  <data name="LvPrevProfile" xml:space="preserve">
     <value>前置代理別名</value>
   </data>
-	<data name="LvNextProfile" xml:space="preserve">
+  <data name="LvNextProfile" xml:space="preserve">
     <value>落地代理別名</value>
   </data>
-	<data name="LvPrevProfileTip" xml:space="preserve">
+  <data name="LvPrevProfileTip" xml:space="preserve">
     <value>請確保別名存在並且唯一</value>
   </data>
-	<data name="TbSettingsEnableExInbound" xml:space="preserve">
+  <data name="TbSettingsEnableExInbound" xml:space="preserve">
     <value>啟用額外監聽端口</value>
   </data>
-	<data name="TbSettingsEnableIPv6Address" xml:space="preserve">
+  <data name="TbSettingsEnableIPv6Address" xml:space="preserve">
     <value>啟用IPv6</value>
   </data>
   <data name="TbSettingsNextServer" xml:space="preserve">
@@ -1209,5 +1209,11 @@
   </data>
   <data name="TbSettingsLatencyLowerRatio" xml:space="preserve">
     <value>延遲降低到的比例(0.1~0.9)</value>
+  </data>
+  <data name="LvAutoSwitchFilter" xml:space="preserve">
+    <value>符合關鍵字的節點加入自動切換</value>
+  </data>
+  <data name="AutoSwitchFilterTips" xml:space="preserve">
+    <value>空白=不添加 all=新增所有 香港|台灣=所有香港和台灣節點</value>
   </data>
 </root>
