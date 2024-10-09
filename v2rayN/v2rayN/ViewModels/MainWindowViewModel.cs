@@ -676,6 +676,12 @@ namespace v2rayN.ViewModels
                 {
                     _updateView(EViewAction.AdjustMainLvColWidth);
                 }
+
+                if (_config.autoSwitchItem.EnableAutoSwitch)
+                {
+                    ServerAutoSwitchs.Stop();
+                    ServerAutoSwitchs.Start();
+                }
             }
         }
 

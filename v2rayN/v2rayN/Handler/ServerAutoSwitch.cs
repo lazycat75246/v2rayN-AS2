@@ -56,6 +56,7 @@ namespace v2rayN.Handler
             if(taskmain!=null)
                taskmain.Wait();
             taskmain = null;
+            _noticeHandler?.SendMessage("Server auto switch is stopped!", true);
         }
         public void SetDelegate(SetDefaultServerDelegate s = null) {
             this.setDefaultServerDelegates = s;
@@ -131,6 +132,7 @@ namespace v2rayN.Handler
             taskmain = Task.Run(() =>
             {
                 _noticeHandler = Locator.Current.GetService<NoticeHandler>();
+                _noticeHandler?.SendMessage("Server auto switch is start!", true);
                 DownloadHandle downloadHandle = new();
                 long failtimestart = 0;
                 long lastlatencytesttime = 0;
@@ -141,19 +143,28 @@ namespace v2rayN.Handler
                 List<ProfileItem> listprofileMain = new List<ProfileItem>();
                 while (!bStop)
                 {
-                    var _config = LazyConfig.Instance.GetConfig();
-                    int iFailTimeMax = LazyConfig.Instance.GetConfig().autoSwitchItem.FailTimeMax;
-                    int iTestInterval = iFailTimeMax / 3;
-                    int ServerSelectMode = LazyConfig.Instance.GetConfig().autoSwitchItem.ServerSelectMode;
-                    int AutoSwitchMode = LazyConfig.Instance.GetConfig().autoSwitchItem.mode;
-                    double LatencyLowerRatio = LazyConfig.Instance.GetConfig().autoSwitchItem.LatencyLowerRatio; 
+                    int res = 0;
+                    var dserver = ConfigHandler.GetDefaultServer(LazyConfig.Instance.GetConfig());
+                    if (dserver!=null && dserver.autoSwitch)
+                    {
+                        int iTestInterval = LazyConfig.Instance.GetConfig().autoSwitchItem.FailTimeMax / 3;
+                        Thread.Sleep(iTestInterval * 1000);
 
-                    Thread.Sleep(iTestInterval * 1000);
-                    int res = downloadHandle.RunAvailabilityCheck(null).Result;
-                    if (!bStop)
-                        Task.Run(() => setTestResultDelegates(_config.indexId, res.ToString(), ""));
+                        res = downloadHandle.RunAvailabilityCheck(null).Result;
+                        if (!bStop)
+                            Task.Run(() => setTestResultDelegates(LazyConfig.Instance.GetConfig().indexId, res.ToString(), ""));
+                        else
+                            break;
+                    }
                     else
-                        break;
+                        failtimestart = 1;
+
+                    var _config = LazyConfig.Instance.GetConfig();
+                    int iFailTimeMax = _config.autoSwitchItem.FailTimeMax;
+                    int ServerSelectMode = _config.autoSwitchItem.ServerSelectMode;
+                    int AutoSwitchMode = _config.autoSwitchItem.mode;
+                    double LatencyLowerRatio = _config.autoSwitchItem.LatencyLowerRatio;
+
                     if (res <= 0)
                     {
                         _noticeHandler?.SendMessage("Current server test failed!",true);
