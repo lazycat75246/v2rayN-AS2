@@ -21,6 +21,7 @@ using v2rayN.Handler;
 using v2rayN.Mode;
 using v2rayN.Resx;
 using v2rayN.Views;
+using System.Windows.Interop;
 
 namespace v2rayN.ViewModels
 {
@@ -271,7 +272,7 @@ namespace v2rayN.ViewModels
 
 
         public ServerAutoSwitch ServerAutoSwitchs= new ServerAutoSwitch();
-
+        private Task TaskUpdateSubscriptionProcess = null;
         #region Init
         private long lastupdatestatics = 0;
         private long lastsavestatics = 0;
@@ -634,6 +635,13 @@ namespace v2rayN.ViewModels
 
             MainFormHandler.Instance.UpdateTask(_config, UpdateTaskHandler);
             MainFormHandler.Instance.RegisterGlobalHotkey(_config, OnHotkeyHandler, UpdateTaskHandler);
+            MainFormHandler.Instance.SetDelegate((i) =>
+            {
+                if(i==0)
+                    ServerAutoSwitchs.Stop();
+                else if(i==1)
+                    ServerAutoSwitchs.Start();
+            });
 
             Reload();
             ChangeSystemProxyStatus(_config.sysProxyType, true);
@@ -677,11 +685,11 @@ namespace v2rayN.ViewModels
                     _updateView(EViewAction.AdjustMainLvColWidth);
                 }
 
-                if (_config.autoSwitchItem.EnableAutoSwitch)
-                {
-                    ServerAutoSwitchs.Stop();
-                    ServerAutoSwitchs.Start();
-                }
+                //if (_config.autoSwitchItem.EnableAutoSwitch)
+                //{
+                //    ServerAutoSwitchs.Stop();
+                //    ServerAutoSwitchs.Start();
+                //}
             }
         }
 
@@ -1420,10 +1428,22 @@ namespace v2rayN.ViewModels
                 SubSelectedChanged(true);
             }
         }
-
+        
         private void UpdateSubscriptionProcess(string subId, bool blProxy)
         {
-            (new UpdateHandle()).UpdateSubscriptionProcess(_config, subId, blProxy, UpdateTaskHandler);
+            if(TaskUpdateSubscriptionProcess==null || TaskUpdateSubscriptionProcess.IsCompleted)
+            {
+                TaskUpdateSubscriptionProcess = Task.Run(() =>
+                {
+                    if (LazyConfig.Instance.GetConfig().autoSwitchItem.EnableAutoSwitch)
+                        ServerAutoSwitchs.Stop();
+                    (new UpdateHandle()).UpdateSubscriptionProcess(_config, subId, blProxy, UpdateTaskHandler);
+                    if (LazyConfig.Instance.GetConfig().autoSwitchItem.EnableAutoSwitch)
+                        ServerAutoSwitchs.Start();
+                });
+            }
+            else
+                _noticeHandler?.SendMessage("UpdateSubscriptionProcess is already running!");
         }
 
         #endregion Subscription

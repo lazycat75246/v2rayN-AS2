@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using ProtosLib.Statistics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Media.Imaging;
@@ -7,12 +8,19 @@ using v2rayN.Resx;
 
 namespace v2rayN.Handler
 {
+    public delegate void AutoSwitchStartDelegate(int i);
+
     public sealed class MainFormHandler
     {
         private static readonly Lazy<MainFormHandler> instance = new(() => new());
         public static MainFormHandler Instance => instance.Value;
+        private AutoSwitchStartDelegate AutoSwitchStartDelegates;
 
-        public Icon GetNotifyIcon(Config config)
+        public void SetDelegate(AutoSwitchStartDelegate s = null)
+        {
+            this.AutoSwitchStartDelegates = s;
+        }
+        public Icon GetNotifyIcon(v2rayN.Mode.Config config)
         {
             try
             {
@@ -47,7 +55,7 @@ namespace v2rayN.Handler
             }
         }
 
-        public System.Windows.Media.ImageSource GetAppIcon(Config config)
+        public System.Windows.Media.ImageSource GetAppIcon(v2rayN.Mode.Config config)
         {
             int index = 1;
             switch ((int)config.sysProxyType)
@@ -68,7 +76,7 @@ namespace v2rayN.Handler
             return BitmapFrame.Create(new Uri($"pack://application:,,,/Resources/NotifyIcon{index}.ico", UriKind.RelativeOrAbsolute));
         }
 
-        private Icon? GetNotifyIcon4Routing(Config config)
+        private Icon? GetNotifyIcon4Routing(v2rayN.Mode.Config config)
         {
             try
             {
@@ -117,7 +125,7 @@ namespace v2rayN.Handler
             }
         }
 
-        public void Export2ClientConfig(ProfileItem item, Config config)
+        public void Export2ClientConfig(ProfileItem item, v2rayN.Mode.Config config)
         {
             if (item == null)
             {
@@ -154,13 +162,13 @@ namespace v2rayN.Handler
             }
         }
 
-        public void UpdateTask(Config config, Action<bool, string> update)
+        public void UpdateTask(v2rayN.Mode.Config config, Action<bool, string> update)
         {
             Task.Run(() => UpdateTaskRunSubscription(config, update));
             Task.Run(() => UpdateTaskRunGeo(config, update));
         }
 
-        private async Task UpdateTaskRunSubscription(Config config, Action<bool, string> update)
+        private async Task UpdateTaskRunSubscription(v2rayN.Mode.Config config, Action<bool, string> update)
         {
             await Task.Delay(60000);
             Logging.SaveLog("UpdateTaskRunSubscription");
@@ -173,6 +181,9 @@ namespace v2rayN.Handler
                             .Where(t => t.autoUpdateInterval > 0)
                             .Where(t => updateTime - t.updateTime >= t.autoUpdateInterval * 60)
                             .ToList();
+
+                if(lstSubs.Count > 0 && LazyConfig.Instance.GetConfig().autoSwitchItem.EnableAutoSwitch)
+                        AutoSwitchStartDelegates(0); 
 
                 foreach (var item in lstSubs)
                 {
@@ -187,11 +198,13 @@ namespace v2rayN.Handler
 
                     await Task.Delay(5000);
                 }
+                if (lstSubs.Count > 0 && LazyConfig.Instance.GetConfig().autoSwitchItem.EnableAutoSwitch)
+                    AutoSwitchStartDelegates(1);
                 await Task.Delay(60000);
             }
         }
 
-        private async Task UpdateTaskRunGeo(Config config, Action<bool, string> update)
+        private async Task UpdateTaskRunGeo(v2rayN.Mode.Config config, Action<bool, string> update)
         {
             var autoUpdateGeoTime = DateTime.Now;
 
@@ -224,7 +237,7 @@ namespace v2rayN.Handler
             }
         }
 
-        public void RegisterGlobalHotkey(Config config, Action<EGlobalHotkey> handler, Action<bool, string> update)
+        public void RegisterGlobalHotkey(v2rayN.Mode.Config config, Action<EGlobalHotkey> handler, Action<bool, string> update)
         {
             HotkeyHandler.Instance.UpdateViewEvent += update;
             HotkeyHandler.Instance.HotkeyTriggerEvent += handler;

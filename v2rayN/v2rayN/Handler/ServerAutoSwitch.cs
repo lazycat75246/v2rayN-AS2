@@ -94,10 +94,15 @@ namespace v2rayN.Handler
         }
         private void updateresult(ref List<TestResultItem> listresult)
         {
-            foreach (var it in listresult)
-            {
-                setTestResultDelegates(it.indexId, it.latency.ToString(), "");
-            }
+            var listresult2= JsonUtils.DeepCopy(listresult);
+            Task.Run(() => {
+                foreach (var it in listresult2)
+                //for (int i = listresult.Count - 1; i >= 0; i--)
+                {
+                    setTestResultDelegates(it.indexId, it.latency.ToString(), "");
+                }
+            });
+
         }
         private void UpdateSpeedtestHandlerMain(string id, string dl, string speed)
         {
@@ -392,7 +397,7 @@ namespace v2rayN.Handler
                                 if (ServerSelectMode == 2)
                                     type = Mode.ESpeedActionType.Realping;
                                 sh.RunPingNew(_config, _coreHandler, listprofile, type, ref testResultItems);
-                                updateresult(ref testResultItems);
+                                updateresult( ref testResultItems);
 
                                 //if (ServerSelectMode == 0 || ServerSelectMode == 1)
                                 //    new SpeedtestHandler(_config, _coreHandler, listprofile, Mode.ESpeedActionType.Tcping, UpdateSpeedtestHandler);
