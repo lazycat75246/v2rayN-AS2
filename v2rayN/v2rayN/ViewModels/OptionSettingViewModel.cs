@@ -8,6 +8,7 @@ using System.Windows;
 using v2rayN.Handler;
 using v2rayN.Mode;
 using v2rayN.Resx;
+using System.Text.RegularExpressions;
 
 namespace v2rayN.ViewModels
 {
@@ -105,6 +106,7 @@ namespace v2rayN.ViewModels
         [Reactive] public int AutoSwitchMode { get; set; }
         [Reactive] public int FailTimeMax { get; set; }
         [Reactive] public double LatencyLowerRatio { get; set; }
+        [Reactive] public string speedPingTestUrl { get; set; }
 
         public ReactiveCommand<Unit, Unit> SaveCmd { get; }
 
@@ -195,6 +197,7 @@ namespace v2rayN.ViewModels
             AutoSwitchMode = _config.autoSwitchItem.mode;
             ServerSelectMode = _config.autoSwitchItem.ServerSelectMode;
             LatencyLowerRatio= _config.autoSwitchItem.LatencyLowerRatio;
+            speedPingTestUrl = _config.speedTestItem.speedPingTestUrl;
 
             var listprofile = LazyConfig.Instance.ProfileItemsAutoSwitch();
 
@@ -369,6 +372,11 @@ namespace v2rayN.ViewModels
             _config.autoSwitchItem.ServerSelectMode=ServerSelectMode;
             _config.autoSwitchItem.FailTimeMax = FailTimeMax;
             _config.autoSwitchItem.LatencyLowerRatio = LatencyLowerRatio;
+
+            speedPingTestUrl= speedPingTestUrl.Trim();
+            if (!Regex.IsMatch(speedPingTestUrl, "^(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]"))
+                speedPingTestUrl = "https://www.google.com/generate_204";
+            _config.speedTestItem.speedPingTestUrl = speedPingTestUrl;
 
             foreach (var item in MainServerItems)
             {

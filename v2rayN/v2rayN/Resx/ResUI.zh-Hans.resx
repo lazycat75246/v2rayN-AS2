@@ -1231,4 +1231,7 @@
   <data name="AutoSwitchFilterTips" xml:space="preserve">
     <value>空白=不添加  all=添加所有  香港|台湾=所有香港和台湾节点</value>
   </data>
+  <data name="TbSettingsSpeedPingTestUrl" xml:space="preserve">
+    <value>真连接延迟测试网址</value>
+  </data>
 </root>

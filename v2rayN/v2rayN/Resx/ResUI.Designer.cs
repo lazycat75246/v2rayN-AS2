@@ -2978,6 +2978,15 @@ namespace v2rayN.Resx {
         }
         
         /// <summary>
+        ///   查找类似 Real ping test URL 的本地化字符串。
+        /// </summary>
+        public static string TbSettingsSpeedPingTestUrl {
+            get {
+                return ResourceManager.GetString("TbSettingsSpeedPingTestUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 SpeedTest Single Timeout Value 的本地化字符串。
         /// </summary>
         public static string TbSettingsSpeedTestTimeout {

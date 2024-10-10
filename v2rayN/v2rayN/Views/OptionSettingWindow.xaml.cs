@@ -208,6 +208,7 @@ namespace v2rayN.Views
                 this.Bind(ViewModel, vm => vm.ServerSelectMode, v => v.cmbServerSelectMode.SelectedIndex).DisposeWith(disposables);
                 this.Bind(ViewModel, vm => vm.FailTimeMax, v => v.txtFailTimeMax.Text).DisposeWith(disposables);
                 this.Bind(ViewModel, vm => vm.LatencyLowerRatio, v => v.TxtLatencyLowerRatio.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.speedPingTestUrl, v => v.TxtSpeedPingTestUrl.Text).DisposeWith(disposables);
 
                 this.BindCommand(ViewModel, vm => vm.SaveCmd, v => v.btnSave).DisposeWith(disposables);
 
@@ -247,11 +248,15 @@ namespace v2rayN.Views
                 {
                     TxtLatencyLowerRatio.Visibility = Visibility.Visible;
                     TxtLatencyLowerRatioTitle.Visibility = Visibility.Visible;
+                    TxtSpeedPingTestUrlTitle.Visibility = Visibility.Visible;
+                    TxtSpeedPingTestUrl.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     TxtLatencyLowerRatio.Visibility = Visibility.Collapsed;
                     TxtLatencyLowerRatioTitle.Visibility = Visibility.Collapsed;
+                    TxtSpeedPingTestUrlTitle.Visibility = Visibility.Collapsed;
+                    TxtSpeedPingTestUrl.Visibility = Visibility.Collapsed;
                 }
             }
         }
