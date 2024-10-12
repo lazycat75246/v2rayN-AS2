@@ -950,7 +950,7 @@ namespace v2rayN.Handler
 
             foreach (ProfileItem item in lstProfile)
             {
-                if (!lstKeep.Exists(i => CompareProfileItem(i, item, false)))
+                if (!lstKeep.Exists(i => CompareProfileItem(i, item, true)))
                 {
                     lstKeep.Add(item);
                 }

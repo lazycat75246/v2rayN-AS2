@@ -3417,5 +3417,14 @@ namespace v2rayN.Resx {
                 return ResourceManager.GetString("UngroupedServers", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 Subscription renewal will start soon, waiting for the automatic switching function to stop! 的本地化字符串。
+        /// </summary>
+        public static string WaitAutoSwitchStop {
+            get {
+                return ResourceManager.GetString("WaitAutoSwitchStop", resourceCulture);
+            }
+        }
     }
 }

@@ -675,6 +675,7 @@ namespace v2rayN.ViewModels
             if (success)
             {
                 var indexIdOld = _config.indexId;
+                ConfigHandler.DedupServerList(_config, _subId);
                 RefreshServers();
                 if (indexIdOld != _config.indexId)
                 {
@@ -1172,7 +1173,7 @@ namespace v2rayN.ViewModels
             {
                 return;
             }
-            SetDefaultServer(SelectedProfile.indexId);
+            Task.Run(()=> SetDefaultServer(SelectedProfile?.indexId));
         }
 
         private void SetDefaultServer(string indexId)
@@ -1436,7 +1437,10 @@ namespace v2rayN.ViewModels
                 TaskUpdateSubscriptionProcess = Task.Run(() =>
                 {
                     if (LazyConfig.Instance.GetConfig().autoSwitchItem.EnableAutoSwitch)
+                    {
+                        _noticeHandler?.SendMessage(ResUI.WaitAutoSwitchStop);
                         ServerAutoSwitchs.Stop();
+                    }
                     (new UpdateHandle()).UpdateSubscriptionProcess(_config, subId, blProxy, UpdateTaskHandler);
                     if (LazyConfig.Instance.GetConfig().autoSwitchItem.EnableAutoSwitch)
                         ServerAutoSwitchs.Start();

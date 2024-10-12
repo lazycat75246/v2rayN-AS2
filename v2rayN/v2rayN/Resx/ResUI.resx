@@ -1237,4 +1237,7 @@
   <data name="TbSettingsSpeedPingTestUrl" xml:space="preserve">
     <value>Real ping test URL</value>
   </data>
+  <data name="WaitAutoSwitchStop" xml:space="preserve">
+    <value>Subscription renewal will start soon, waiting for the automatic switching function to stop!</value>
+  </data>
 </root>

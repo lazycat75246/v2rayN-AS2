@@ -1219,4 +1219,7 @@
   <data name="TbSettingsSpeedPingTestUrl" xml:space="preserve">
     <value>真連線延遲測試網址</value>
   </data>
+  <data name="WaitAutoSwitchStop" xml:space="preserve">
+    <value>訂閱更新即將開始,正在等待自動切換功能停止!</value>
+  </data>
 </root>
