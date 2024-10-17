@@ -8,7 +8,7 @@ namespace v2rayN.Handler
     {
         private Config _config;
         private ServerStatItem? _serverStatItem;
-        private List<ServerStatItem> _lstServerStat;
+        private volatile List<ServerStatItem> _lstServerStat;
         private Action<ServerSpeedItem> _updateFunc;
         private StatisticsV2ray? _statisticsV2Ray;
         private StatisticsSingbox? _statisticsSingbox;

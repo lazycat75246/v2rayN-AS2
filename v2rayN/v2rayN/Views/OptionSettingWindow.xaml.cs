@@ -227,6 +227,28 @@ namespace v2rayN.Views
             {
                 cmbAutoSwitchMainMode_OnSelectionChanged(s, e);
             };
+
+            cmbServerSelectMode.SelectionChanged += (s, e) =>
+            {
+                cmbServerSelectMode_OnSelectionChanged(s, e);
+            };
+        }
+        private void cmbServerSelectMode_OnSelectionChanged(object sender, EventArgs e)
+        {
+            var cmb = sender as ComboBox;
+            if (cmb != null)
+            {
+                if (cmb.SelectedIndex == 2)
+                {
+                    TxtSpeedPingTestUrlTitle.Visibility = Visibility.Visible;
+                    TxtSpeedPingTestUrl.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    TxtSpeedPingTestUrlTitle.Visibility = Visibility.Collapsed;
+                    TxtSpeedPingTestUrl.Visibility = Visibility.Collapsed;
+                }
+            }
         }
         private void cmbAutoSwitchMainMode_OnSelectionChanged(object sender, EventArgs e)
         {
@@ -248,15 +270,11 @@ namespace v2rayN.Views
                 {
                     TxtLatencyLowerRatio.Visibility = Visibility.Visible;
                     TxtLatencyLowerRatioTitle.Visibility = Visibility.Visible;
-                    TxtSpeedPingTestUrlTitle.Visibility = Visibility.Visible;
-                    TxtSpeedPingTestUrl.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     TxtLatencyLowerRatio.Visibility = Visibility.Collapsed;
                     TxtLatencyLowerRatioTitle.Visibility = Visibility.Collapsed;
-                    TxtSpeedPingTestUrlTitle.Visibility = Visibility.Collapsed;
-                    TxtSpeedPingTestUrl.Visibility = Visibility.Collapsed;
                 }
             }
         }

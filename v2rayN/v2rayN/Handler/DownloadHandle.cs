@@ -294,9 +294,16 @@ namespace v2rayN.Handler
                     Proxy = webProxy,
                     UseProxy = webProxy != null
                 });
-                await client.GetAsync(url, cts.Token);
+                client.MaxResponseContentBufferSize = 1;
 
-                responseTime = timer.Elapsed.Milliseconds;
+                using var res = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+
+
+                if (res.IsSuccessStatusCode)
+                {
+                    responseTime = timer.Elapsed.Milliseconds;
+                }
+
             }
             catch //(Exception ex)
             {
