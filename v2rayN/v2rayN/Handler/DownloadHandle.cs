@@ -287,23 +287,20 @@ namespace v2rayN.Handler
             {
                 Stopwatch timer = Stopwatch.StartNew();
 
-                using var cts = new CancellationTokenSource();
-                cts.CancelAfter(TimeSpan.FromSeconds(downloadTimeout));
-                using var client = new HttpClient(new SocketsHttpHandler()
+                using (var client = new HttpClient(new SocketsHttpHandler()
                 {
                     Proxy = webProxy,
                     UseProxy = webProxy != null
-                });
-                client.MaxResponseContentBufferSize = 1;
-
-                using var res = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cts.Token);
-
-
-                if (res.IsSuccessStatusCode)
+                }))
                 {
-                    responseTime = timer.Elapsed.Milliseconds;
-                }
+                    client.Timeout = TimeSpan.FromSeconds(downloadTimeout);
+                    var req = new HttpRequestMessage(HttpMethod.Head, url);
+                    req.Headers.ConnectionClose = true;
+                    using HttpResponseMessage res = await client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(true);
 
+                    if (res.IsSuccessStatusCode)
+                        responseTime = timer.Elapsed.Milliseconds;
+                };
             }
             catch //(Exception ex)
             {
